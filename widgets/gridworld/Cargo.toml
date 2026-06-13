@@ -31,8 +31,8 @@ default = []
 # reimplementation. Both deps need `default-features = false` because
 # this widget is a standalone workspace; the main simulator workspace
 # default (Bevy-free) doesn't reach here.
-playground = { path = "../../crates/engine/playground", default-features = false }
-rl_core = { path = "../../crates/engine/rl_core", default-features = false }
+playground = { git = "https://github.com/falahat/rl-core.git", rev = "f9c7fcedf63324b3e4e80b0d6ac9326a42e05d42", default-features = false }
+rl_core = { git = "https://github.com/falahat/rl-core.git", rev = "f9c7fcedf63324b3e4e80b0d6ac9326a42e05d42", default-features = false }
 
 # Standard wasm-bindgen glue. `js-sys` for JS interop; `web-sys` for
 # DOM access (canvas drawing + input handling).

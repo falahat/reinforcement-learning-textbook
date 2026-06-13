@@ -5,6 +5,7 @@ version = 4
 [[package]]
 name = "action_id"
 version = "0.1.0"
+source = "git+https://github.com/falahat/rl-core.git?rev=f9c7fcedf63324b3e4e80b0d6ac9326a42e05d42#f9c7fcedf63324b3e4e80b0d6ac9326a42e05d42"
 dependencies = [
  "serde",
 ]
@@ -24,6 +25,7 @@ checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 [[package]]
 name = "determinism"
 version = "0.1.0"
+source = "git+https://github.com/falahat/rl-core.git?rev=f9c7fcedf63324b3e4e80b0d6ac9326a42e05d42#f9c7fcedf63324b3e4e80b0d6ac9326a42e05d42"
 
 [[package]]
 name = "futures-core"
@@ -94,6 +96,7 @@ dependencies = [
 [[package]]
 name = "rl_core"
 version = "0.1.0"
+source = "git+https://github.com/falahat/rl-core.git?rev=f9c7fcedf63324b3e4e80b0d6ac9326a42e05d42#f9c7fcedf63324b3e4e80b0d6ac9326a42e05d42"
 dependencies = [
  "action_id",
  "determinism",
