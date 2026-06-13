@@ -10,8 +10,9 @@
 # pair the chapters already use. No external preprocessor binary needed.
 #
 # Build: `mdbook build` (from this directory) produces `book/`. Local
-# preview: `mdbook serve`. CI deploy is deliberately not configured here
-# — see the design doc at `docs/designs/interactive_textbook.md`.
+# preview: `mdbook serve`. CI builds + lints this book and deploys it to
+# GitHub Pages on every push to `main` under `docs/textbook/**` — see the
+# `.github/workflows/textbook.yml` workflow.
 
 [book]
 title = "Reinforcement Learning & Foundational AI"
