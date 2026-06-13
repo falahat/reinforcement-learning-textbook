@@ -1,0 +1,6 @@
+# mdBook build output — regenerate with `mdbook build docs/textbook`.
+docs/textbook/book/
+
+# Rust widget build artifacts — the committed `pkg/` outputs under
+# docs/textbook/widgets/<name>/pkg/ are the shipped artifacts.
+widgets/*/target/

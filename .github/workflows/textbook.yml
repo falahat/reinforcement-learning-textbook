@@ -1,0 +1,109 @@
+name: Textbook
+
+on:
+  # Build + deploy only when the textbook source actually changes. Code-
+  # only commits don't trigger this lane.
+  push:
+    branches: [main]
+    paths:
+      - "docs/textbook/**"
+      - ".github/workflows/textbook.yml"
+  # PRs only build (no deploy) — catches breakage before merge. The
+  # built site is still uploaded as a workflow artifact for spot-check.
+  pull_request:
+    paths:
+      - "docs/textbook/**"
+      - ".github/workflows/textbook.yml"
+  workflow_dispatch:
+
+# First-party Pages deploys need `pages: write` to publish and
+# `id-token: write` for OIDC attestation. `contents: read` is the
+# minimum read permission for the checkout step.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# GitHub's recommended concurrency for Pages deploys: group all on the
+# same key so deploys serialise, and DON'T cancel an in-flight one —
+# cancelling mid-publish can leave Pages in a half-updated state.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Cache both mdbook binaries across runs, keyed on pinned versions.
+      # First run pays the ~30-60s `cargo install` cost per binary; every
+      # subsequent run with the same key restores them in <1s. First-party
+      # `actions/cache@v4`.
+      - name: Cache mdBook + mdbook-mermaid binaries
+        id: cache-mdbook
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/mdbook
+            ~/.cargo/bin/mdbook-mermaid
+          key: mdbook-${{ runner.os }}-mdbook-0.5.3-mermaid-0.17.0
+      - name: Install mdBook + mdbook-mermaid
+        # Skipped when the cache hit restored both binaries. Both are
+        # source-built from crates.io with --locked — the standard Rust
+        # supply-chain-clean install (NOT pre-built tarballs; see commit
+        # bc7a9a5 for context). Versions pinned so the cache key stays
+        # meaningful.
+        if: steps.cache-mdbook.outputs.cache-hit != 'true'
+        run: |
+          cargo install --locked --version 0.5.3 mdbook
+          cargo install --locked --version 0.17.0 mdbook-mermaid
+      # Validation. The textbook targets github.io (mdBook output) only —
+      # the deployed site is what matters. Two complementary lint passes:
+      - name: LaTeX pre-build syntax check
+        # Fast Node validator. KaTeX strict-mode parse + pulldown-cmark
+        # context rules (display-math-in-blockquote, indented-display,
+        # display-math-on-continuation-line, pmatrix-in-inline,
+        # inline-math-spans-newline). Catches LaTeX bugs BEFORE mdBook
+        # silently produces broken HTML.
+        run: |
+          cd docs/textbook/lint
+          npm ci
+          node check.js
+      - name: Build textbook
+        run: mdbook build docs/textbook
+      - name: LaTeX rendered-HTML check
+        # Scans the BUILT mdBook HTML — the actual bytes that ship to
+        # github.io — for rendering bugs only visible in the output:
+        # pulldown-cmark eating `_` as italic inside math spans (leaves
+        # literal <em> tags that MathJax can't parse), curly-quote
+        # contamination, math-in-attribute. If this is clean, the
+        # deployed site renders math correctly.
+        run: python3 docs/textbook/lint/find_em_in_math.py
+      - name: Configure Pages
+        # First-party action; validates Pages is enabled for the repo
+        # and emits the base URL the deploy job consumes.
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        # The artifact is named `github-pages` by convention — the
+        # downstream `actions/deploy-pages@v4` looks for it by name.
+        # Also downloadable from the workflow-run UI for PR spot-checks.
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/textbook/book
+
+  deploy:
+    # Only deploy on push to main — PR builds stop at the artifact.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    # The `github-pages` environment is auto-created by the deploy
+    # action and shows up under repo Settings → Environments with full
+    # deploy history + the live URL.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

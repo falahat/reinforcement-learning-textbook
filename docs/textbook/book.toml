@@ -1,0 +1,85 @@
+# mdBook configuration for the Simulator project's RL textbook.
+#
+# Source: `docs/textbook/*.md` — the 18 hand-authored chapters, plus the
+# index and bibliography. mdBook reads SUMMARY.md for the TOC and renders
+# each `*.md` directly; no migration of chapter content is required.
+#
+# Math: GitHub-style `$…$` (inline) and `$$…$$` (display). The built-in
+# `mathjax-support` enables MathJax 3; `theme/head.hbs` extends its
+# default `\(…\)` / `\[…\]` config to also accept the `$…$` / `$$…$$`
+# pair the chapters already use. No external preprocessor binary needed.
+#
+# Build: `mdbook build` (from this directory) produces `book/`. Local
+# preview: `mdbook serve`. CI deploy is deliberately not configured here
+# — see the design doc at `docs/designs/interactive_textbook.md`.
+
+[book]
+title = "Reinforcement Learning & Foundational AI"
+# No `authors` — this is a self-study compilation, not an authored work.
+# Content is restated/condensed from primary sources (Sutton & Barto,
+# Szepesvári, Bertsekas, etc.); see `bibliography.md` for full citations.
+description = "A self-study RL textbook anchored in a real simulator, distilled from primary sources."
+src = "."
+language = "en"
+# Multilingual book layout would change `src` — single-language for now.
+
+[build]
+build-dir = "book"
+create-missing = false
+
+[output.html]
+# MathJax 3 is loaded manually from `theme/head.hbs` with `$…$` /
+# `$$…$$` delimiters — the syntax the chapters already use.
+# `mathjax-support = true` would inject mdBook's own v2 config with
+# `\(…\)` / `\[…\]` delimiters instead, which doesn't match the
+# chapters. Keeping it off so our config is the only one loaded.
+mathjax-support = false
+# `smart-punctuation = false` is critical: the default turns straight
+# apostrophes (`'`) into curly right-single-quotes (`’`) — INCLUDING
+# inside `$…$` math blocks. MathJax can't parse `$s’$`, so notation
+# like `s'` (state-prime) renders as raw text. Keep curly quotes off.
+smart-punctuation = false
+# Mobile-friendly defaults — the textbook reads on phones too.
+default-theme = "navy"
+preferred-dark-theme = "navy"
+# Edit-on-GitHub link — clicks land at the source file in the repo.
+# Resolve `{path}` at the chapter's path under `docs/textbook/`.
+edit-url-template = "https://github.com/falahat/reinforcement-learning-textbook/edit/main/docs/textbook/{path}"
+git-repository-url = "https://github.com/falahat/reinforcement-learning-textbook"
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
+additional-css = ["widgets/shared/widgets.css"]
+# `git-repository-icon` deliberately omitted — mdBook 0.5 picks the
+# GitHub icon by default when the URL hostname is github.com.
+
+[output.html.print]
+# Per-chapter print is useful but the cover-print is noisy. Keep the
+# print build disabled until someone asks for it.
+enable = false
+
+[output.html.fold]
+# Collapse the per-chapter TOC by default; the textbook has 18 chapters
+# and the always-open sidebar gets noisy.
+enable = true
+level = 1
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+# Glossary auto-tooltips — DEFERRED.
+#
+# Plan: use `mdbook-termlink` (https://github.com/rubentalstra/mdbook-termlink)
+# to auto-wrap chapter occurrences of glossary terms in HTML elements
+# with native `title="…"` hover tooltips. No custom JS.
+#
+# Blocker: the v0.1.1 release fails to locate the glossary file on
+# Windows regardless of relative/absolute path. Tracked for a future
+# pass — the glossary source is in `reference/glossary.md`. Once the
+# upstream path-resolution bug is fixed (or once we settle on a
+# different preprocessor), uncomment the block below.
+#
+# [preprocessor.termlink]
+# command = "mdbook-termlink"
+# glossary-path = "reference/glossary.md"
+# display-mode = "tooltip"

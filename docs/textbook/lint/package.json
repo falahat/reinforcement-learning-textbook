@@ -1,0 +1,14 @@
+{
+  "name": "textbook-lint",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Pre-build LaTeX syntax check for docs/textbook/*.md. Catches KaTeX strict-mode parse errors + pulldown-cmark/MathJax context bugs before mdBook produces broken output. Render-time verification is find_em_in_math.py (Python) which scans built HTML.",
+  "main": "check.js",
+  "scripts": {
+    "lint": "node check.js",
+    "lint:strict": "node check.js --strict"
+  },
+  "dependencies": {
+    "katex": "^0.16.11"
+  }
+}

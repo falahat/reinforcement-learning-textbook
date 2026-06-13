@@ -1,0 +1,64 @@
+<!--
+  Custom <head> for mdBook — loads MathJax 3 with the textbook's
+  existing GitHub-compatible `$…$` / `$$…$$` delimiters. mdBook's
+  built-in `mathjax-support` injects a MathJax v2 config that only
+  recognises `\(…\)` / `\[…\]`, so it's turned off in book.toml and
+  we configure MathJax ourselves here.
+
+  Why MathJax (not KaTeX): MathJax v3 is faster than v2, ships AAA-
+  quality typography, and needs no extra mdBook preprocessor binary.
+  KaTeX would require the `mdbook-katex` external tool, which is the
+  kind of extra-binary install the user has previously flagged.
+
+  Skip code spans / pre — the textbook has documentation examples
+  like `$V^\pi(s)$` inside backticks that are about math, not math
+  themselves.
+-->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [["$", "$"], ["\\(", "\\)"]],
+      displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+      processEscapes: true,
+      processEnvironments: true,
+    },
+    options: {
+      skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+    },
+  };
+</script>
+<script
+  type="text/javascript"
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+></script>
+
+<!--
+  Mermaid is handled by the `mdbook-mermaid` preprocessor — see
+  `[preprocessor.mermaid]` in book.toml. The preprocessor injects
+  `mermaid.min.js` + `mermaid-init.js` via `additional-js`; no inline
+  script needed here.
+-->
+
+<!--
+  Import-map for TypeScript / JS math-viz widgets. Pins d3 and
+  Observable Plot to specific versions on jsdelivr's `/+esm` endpoint
+  (single-file ESM bundles generated server-side). Per-widget cost is
+  just `import * as Plot from "@observablehq/plot"` — no bundler, no
+  transpile step. See docs/designs/interactive_textbook.md for the
+  full TS-vs-Rust widget decision.
+
+  Must come BEFORE any `<script type="module">` that uses the bare
+  module specifiers ("d3", "@observablehq/plot"). Chapter widgets run
+  in the body, after head, so the order is fine.
+-->
+<script type="importmap">
+{
+  "imports": {
+    "d3": "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm",
+    "@observablehq/plot": "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6.16/+esm"
+  }
+}
+</script>
+

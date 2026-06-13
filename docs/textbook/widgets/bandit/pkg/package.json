@@ -1,0 +1,15 @@
+{
+  "name": "widget-bandit",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "widget_bandit_bg.wasm",
+    "widget_bandit.js",
+    "widget_bandit.d.ts"
+  ],
+  "main": "widget_bandit.js",
+  "types": "widget_bandit.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

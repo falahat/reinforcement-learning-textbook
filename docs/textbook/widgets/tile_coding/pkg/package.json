@@ -1,0 +1,15 @@
+{
+  "name": "widget-tile-coding",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "widget_tile_coding_bg.wasm",
+    "widget_tile_coding.js",
+    "widget_tile_coding.d.ts"
+  ],
+  "main": "widget_tile_coding.js",
+  "types": "widget_tile_coding.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

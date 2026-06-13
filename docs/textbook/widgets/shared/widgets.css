@@ -1,0 +1,402 @@
+/* Shared CSS for textbook math-viz widgets.
+ *
+ * Every TS/JS widget uses the `.textbook-widget` outer class + the
+ * `data-input`, `data-plot`, `data-readout` slot conventions. This
+ * file lives at `docs/textbook/widgets/shared/widgets.css` and is
+ * loaded via `additional-css` in book.toml so it applies to every
+ * page.
+ */
+
+.textbook-widget {
+  margin: 1em 0;
+  padding: 0.6em 0.8em;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  border-radius: 4px;
+  font-family: sans-serif;
+}
+
+.textbook-widget .widget-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8em;
+  margin-bottom: 0.6em;
+  font-size: 0.9em;
+}
+
+.textbook-widget .widget-controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  white-space: nowrap;
+}
+
+.textbook-widget .widget-controls input[type="range"] {
+  width: 110px;
+}
+
+.textbook-widget .widget-controls input[type="number"] {
+  width: 70px;
+}
+
+.textbook-widget .widget-controls button {
+  padding: 0.25em 0.7em;
+  cursor: pointer;
+}
+
+.textbook-widget [data-readout] {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+
+.textbook-widget [data-plot] svg {
+  background: transparent;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Plot's default text colour is black; override for the textbook's
+ * dark theme. mdBook's "navy" theme has light text on dark; Plot's
+ * tick labels need to match. */
+.textbook-widget svg text {
+  fill: #ddd;
+}
+
+.textbook-widget svg [aria-label="x-axis tick"] line,
+.textbook-widget svg [aria-label="y-axis tick"] line,
+.textbook-widget svg [aria-label="x-axis"] line,
+.textbook-widget svg [aria-label="y-axis"] line {
+  stroke: #888;
+}
+
+/* Matrix / vector grid styling (shared by matrix_editor.js).
+ *
+ * The four matrix-heavy widgets (eigenvector, matrix_norms,
+ * markov_mixing, bellman_linear) render an editable 2-D grid of number
+ * inputs alongside their abstract plots so readers can see the matrix
+ * being manipulated, not just its visual effect.
+ *
+ * Cells are monospace + right-aligned so digits line up; the editor
+ * variant exposes `<input type="number">` while the read-only display
+ * uses styled `<div>`s with the same dimensions for visual consistency.
+ */
+.textbook-widget .widget-matrix {
+  display: inline-grid;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.15);
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  vertical-align: middle;
+}
+
+.textbook-widget .widget-matrix-cell {
+  width: 4.2em;
+  padding: 2px 4px;
+  text-align: right;
+  font-family: ui-monospace, monospace;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  border-radius: 2px;
+  color: inherit;
+}
+
+.textbook-widget input.widget-matrix-cell {
+  /* Strip the default browser chrome so editor + display cells match. */
+  -moz-appearance: textfield;
+}
+
+.textbook-widget input.widget-matrix-cell::-webkit-outer-spin-button,
+.textbook-widget input.widget-matrix-cell::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.textbook-widget .widget-matrix-cell-readonly {
+  user-select: text;
+  opacity: 0.9;
+}
+
+.textbook-widget .widget-matrix-header,
+.textbook-widget .widget-matrix-corner {
+  padding: 2px 4px;
+  text-align: center;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8em;
+  color: #aaa;
+  background: transparent;
+}
+
+.textbook-widget .widget-matrix-title {
+  font-size: 0.8em;
+  color: #aaa;
+  margin-bottom: 0.2em;
+}
+
+.textbook-widget .widget-matrix-display {
+  display: inline-block;
+  margin: 0 0.5em 0.4em 0;
+  vertical-align: top;
+}
+
+/* Container that holds the plot + matrix side-by-side. Widgets opt in
+ * by giving their wrapper this class. */
+.textbook-widget .widget-matrix-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  align-items: flex-start;
+}
+
+.textbook-widget .widget-matrix-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  min-width: 180px;
+}
+
+.textbook-widget .widget-vector-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+}
+
+.textbook-widget .widget-vector-row {
+  display: flex;
+  gap: 0.4em;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.textbook-widget .widget-vector-row-hoverable {
+  cursor: pointer;
+}
+
+.textbook-widget .widget-vector-row-hoverable:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.textbook-widget .widget-vector-label {
+  color: #aaa;
+  min-width: 3em;
+}
+
+.textbook-widget .widget-vector-values {
+  color: inherit;
+}
+
+/* ─── Live coding exercises (defineExercise) ──────────────────────
+ *
+ * Visually adjacent to `.textbook-widget` — same border, same dark
+ * palette — but distinct enough that a reader can tell at a glance
+ * "this is a thing I type into" vs. "this is a thing I slide."
+ */
+.textbook-exercise {
+  margin: 1em 0;
+  padding: 0.7em 0.9em;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(128, 128, 128, 0.28);
+  border-left: 3px solid #5aa9e6;     /* blue stripe — "code action" */
+  border-radius: 4px;
+  font-family: sans-serif;
+}
+
+.textbook-exercise .exercise-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+  margin-bottom: 0.5em;
+}
+
+.textbook-exercise .exercise-title {
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+.textbook-exercise .exercise-status {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+.textbook-exercise .status-pass { color: #6ed26e; }
+.textbook-exercise .status-fail { color: #e77878; }
+
+.textbook-exercise .exercise-prompt {
+  font-size: 0.92em;
+  line-height: 1.5;
+  margin-bottom: 0.7em;
+}
+.textbook-exercise .exercise-prompt p { margin: 0.4em 0; }
+.textbook-exercise .exercise-prompt code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.92em;
+  padding: 0 0.25em;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+}
+
+/* Signature block — author-supplied type-hint pre, rendered above
+ * the editor. Monospace with column alignment preserved so authors
+ * can align `:` between argname and type. */
+.textbook-exercise .exercise-signature {
+  margin: 0 0 0.5em;
+  padding: 0.5em 0.75em;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 2px solid rgba(90, 169, 230, 0.55);
+  border-radius: 0 3px 3px 0;
+  font-family: ui-monospace, monospace;
+  font-size: 0.84em;
+  line-height: 1.45;
+  white-space: pre;
+  overflow-x: auto;
+  color: #bcd4e6;
+}
+
+/* Sample-input disclosure — `<details>` collapsed by default. */
+.textbook-exercise .exercise-sample {
+  margin: 0 0 0.5em;
+  font-size: 0.85em;
+}
+.textbook-exercise .exercise-sample summary {
+  cursor: pointer;
+  padding: 0.2em 0;
+  opacity: 0.85;
+}
+.textbook-exercise .exercise-sample summary:hover { opacity: 1; }
+.textbook-exercise .exercise-sample pre {
+  margin: 0.3em 0 0;
+  padding: 0.55em 0.75em;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  border-radius: 3px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.82em;
+  line-height: 1.45;
+  white-space: pre;
+  overflow-x: auto;
+  color: #c0c0c0;
+}
+
+/* Editor host — CodeMirror 6 mounts here when the upgrade succeeds.
+ * Empty until the upgrade lands; the textarea fallback sits below it. */
+.textbook-exercise .exercise-editor-host { /* CM6 view styles itself */ }
+.textbook-exercise .exercise-editor-host .cm-editor {
+  border-radius: 3px;
+}
+
+.textbook-exercise .exercise-editor {
+  width: 100%;
+  min-height: 8em;
+  padding: 0.55em 0.75em;
+  background: rgba(0, 0, 0, 0.35);
+  color: #d4d4d4;
+  border: 1px solid rgba(128, 128, 128, 0.28);
+  border-radius: 3px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.88em;
+  line-height: 1.45;
+  tab-size: 2;
+  resize: vertical;
+  box-sizing: border-box;
+}
+.textbook-exercise .exercise-editor:focus {
+  outline: none;
+  border-color: #5aa9e6;
+}
+
+.textbook-exercise .exercise-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  flex-wrap: wrap;
+  margin-top: 0.6em;
+}
+.textbook-exercise .exercise-controls button {
+  padding: 0.3em 0.8em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.textbook-exercise .exercise-seed {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+.textbook-exercise .exercise-seed input[type="number"] {
+  width: 70px;
+  font-family: ui-monospace, monospace;
+}
+.textbook-exercise .exercise-attempts {
+  font-family: ui-monospace, monospace;
+  font-size: 0.82em;
+  opacity: 0.65;
+  margin-left: auto;
+}
+
+.textbook-exercise .exercise-result {
+  margin-top: 0.6em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.textbook-exercise .exercise-case {
+  display: flex;
+  gap: 0.5em;
+  align-items: baseline;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.84em;
+}
+.textbook-exercise .case-pass {
+  background: rgba(110, 210, 110, 0.08);
+}
+.textbook-exercise .case-fail {
+  background: rgba(231, 120, 120, 0.10);
+}
+.textbook-exercise .case-icon {
+  font-weight: 700;
+  min-width: 1em;
+}
+.textbook-exercise .case-pass .case-icon { color: #6ed26e; }
+.textbook-exercise .case-fail .case-icon { color: #e77878; }
+.textbook-exercise .case-name {
+  min-width: 4.5em;
+  opacity: 0.8;
+}
+.textbook-exercise .exercise-detail {
+  opacity: 0.85;
+}
+
+.textbook-exercise .exercise-error {
+  margin-top: 0.5em;
+  padding: 0.5em 0.7em;
+  background: rgba(231, 120, 120, 0.10);
+  border-left: 3px solid #e77878;
+  border-radius: 3px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  white-space: pre-wrap;
+}
+
+.textbook-exercise .exercise-solution {
+  margin-top: 0.6em;
+  padding: 0.55em 0.75em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(128, 128, 128, 0.4);
+  border-radius: 3px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  line-height: 1.45;
+  white-space: pre;
+  overflow-x: auto;
+}

@@ -1,0 +1,51 @@
+# Empty `[workspace]` makes this crate a standalone workspace root,
+# detached from the main simulator workspace above. Widgets need this
+# because they target wasm32-unknown-unknown with `crate-type=cdylib`,
+# which would interfere with the simulator's native build cache.
+[workspace]
+
+[package]
+name = "widget-tile-coding"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# Interactive widget for Chapter 8 (Function approximation).
+# A pure-visualisation widget: no learning loop, just a live picture of
+# which tile each tiling activates for a draggable query point in the
+# unit square. Reuses `rl_core::TileCoder` directly so the indices the
+# widget shows are the exact indices the simulator would compute.
+#
+# Built with `wasm-pack build --target web --release` into `pkg/`.
+# The chapter's HTML loads `pkg/widget_tile_coding.js` as an ES module.
+
+[lib]
+crate-type = ["cdylib"]
+doctest = false
+
+[features]
+default = []
+
+[dependencies]
+# Only `rl_core` — this widget does not run an episode, it only calls
+# the tile coder. `default-features = false` because this is a
+# standalone workspace; the main simulator workspace default
+# (Bevy-free) doesn't reach here.
+rl_core = { path = "../../crates/engine/rl_core", default-features = false }
+
+# Standard wasm-bindgen glue. `js-sys` for JS interop; `web-sys` for
+# DOM access (canvas drawing + mouse-drag handling).
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = [
+  "Document",
+  "Element",
+  "Event",
+  "HtmlElement",
+  "HtmlCanvasElement",
+  "HtmlInputElement",
+  "CanvasRenderingContext2d",
+  "MouseEvent",
+  "Window",
+  "console",
+] }

@@ -1,0 +1,15 @@
+{
+  "name": "widget-gridworld",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "widget_gridworld_bg.wasm",
+    "widget_gridworld.js",
+    "widget_gridworld.d.ts"
+  ],
+  "main": "widget_gridworld.js",
+  "types": "widget_gridworld.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

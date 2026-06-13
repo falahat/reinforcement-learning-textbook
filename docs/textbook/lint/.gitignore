@@ -1,0 +1,4 @@
+node_modules/
+# `package-lock.json` is COMMITTED — required by `npm ci` in CI, and
+# standard practice for any Node project that needs reproducible
+# installs.
